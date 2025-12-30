@@ -22,39 +22,73 @@ public class SafePosition
 
     private void Left(Strategy strategy, int steps)
     {
-        int newPosition = (Position - steps) % 100;
-        if (newPosition < 0)
+        int newPosition;
+        switch (strategy)
         {
-            if (strategy == Strategy.AnyClick)
-            {
-                int zeroes = (Math.Abs(newPosition) / 100) + 1;
-                Console.WriteLine($"Left Move: Pos {Position} - Steps {steps} => Zeroes {zeroes}");
-                Zeroes += zeroes;
-            }
-            newPosition += 100;
+            case Strategy.EndOfTurn:
+                newPosition = (Position - steps) % 100;
+                if (newPosition == 0)
+                {
+                    Zeroes++;
+                }
+                if (newPosition < 0)
+                {
+                    newPosition += 100;
+                }
+                Position = newPosition;
+                break;
+            case Strategy.AnyClick:
+                Console.WriteLine($"Processing Left {steps} from position {Position}");
+                newPosition = Position;
+                for (int i = 1; i <= steps; i++)
+                {
+                    newPosition = (newPosition - 1) % 100;
+                    if (newPosition == 0)
+                    {
+                        Console.WriteLine($"Hit zero moving left from {Position} by {steps} steps.");
+                        Zeroes++;
+                    }
+                }
+                if (newPosition < 0)
+                {
+                    newPosition += 100;
+                }
+                Position = newPosition;
+                Console.WriteLine($"New position after moving left: {Position}");
+                break;
         }
-        if (newPosition == 0 && strategy == Strategy.EndOfTurn)
-        {
-            Console.WriteLine($"Left Move to Zero: Pos {Position} - Steps {steps}");
-            Zeroes++;
-        }
-        Position = newPosition;
+
+        
     }
 
     private void Right(Strategy strategy, int steps)
     {
-        if (strategy == Strategy.AnyClick)
+        int newPosition;
+        switch (strategy)
         {
-            int zeroes = (Position + steps) / 100;
-            Console.WriteLine($"Right Move: Pos {Position} + Steps {steps} => Zeroes {zeroes}");
-            Zeroes += zeroes;
+            case Strategy.EndOfTurn:
+                newPosition = (Position + steps) % 100;
+                if (newPosition == 0)
+                {
+                    Zeroes++;
+                }
+                Position = newPosition;
+                return;
+            case Strategy.AnyClick:
+                Console.WriteLine($"Processing Right {steps} from position {Position}");
+                newPosition = Position;
+                for (int i = 1; i <= steps; i++)
+                {
+                    newPosition = (newPosition + 1) % 100;
+                    if (newPosition == 0)
+                    {
+                        Console.WriteLine($"Hit zero moving right from {Position} by {steps} steps.");
+                        Zeroes++;
+                    }
+                }
+                Position = newPosition;
+                Console.WriteLine($"New position after moving right: {Position}");
+                return;
         }
-        int newPosition = (Position + steps) % 100;
-        if (newPosition == 0 && strategy == Strategy.EndOfTurn)
-        {
-            Console.WriteLine($"Right Move to Zero: Pos {Position} + Steps {steps}");
-            Zeroes++;
-        }
-        Position = newPosition;
     }
 }
